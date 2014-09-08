@@ -75,6 +75,7 @@ has redis_debug         => ( is => 'ro' );
 has redis_name          => ( is => 'ro' );
 has redis_key           => ( is => 'ro', default => 'session:%s' );
 has redis_serialization => ( is => 'ro' );
+has redis_test_mock     => ( is => 'ro', default => sub { $ENV{DANCER_SESSION_REDIS_TEST_MOCK} || 0 } );
 
 has _serialization => (
   is      => 'lazy',
@@ -82,6 +83,7 @@ has _serialization => (
   builder => sub {
     my ($dsl1) = @_;
     my $serialization;
+    return unless $dsl1->redis_serialization;
 
     # Setup serialization.
     if ( my $serialization_module = delete $dsl1->redis_serialization->{module} ) {
@@ -94,7 +96,7 @@ has _serialization => (
         $serialization = "$serialization_module"->new( %{ $dsl1->redis_serialization } );
       }
       catch {
-        $dsl1->error(qq{Unable to set up serialization '$serialization_module': $_});
+        croak(qq{Unable to set up serialization '$serialization_module': $_});
       };
     }
     return $serialization;
@@ -103,9 +105,14 @@ has _serialization => (
 
 has _redis => (
   is      => 'lazy',
-  isa     => InstanceOf ['Redis'],
+  isa     => AnyOf [ InstanceOf ['Redis'], InstanceOf ['t::TestApp::RedisMock'] ],
   builder => sub {
     my ($dsl2) = @_;
+
+    if ( $dsl2->redis_test_mock ) {
+      require t::TestApp::RedisMock;
+      return t::TestApp::RedisMock->new;
+    }
 
     # Build Redis->new settings.
     my %opts = (
@@ -126,7 +133,7 @@ has _redis => (
 
     # Validate reconnect settings.
     if ( ( exists $opts{reconnect} || exists $opts{every} ) && ( !$opts{reconnect} || !$opts{every} ) ) {
-      $dsl2->error(q{Incomplete Redis configuration for 'reconnect' and 'every', skipping...});
+      croak(q{Incomplete Redis configuration for 'reconnect' and 'every', skipping...});
       delete $opts{reconnect};
       delete $opts{every};
     }
@@ -134,7 +141,7 @@ has _redis => (
     # Validate on_connect settings.
     if ( $dsl2->redis_on_connect ) {
       if ( !$dsl2->redis_on_connect ) {
-        $dsl2->error(q{Invalid Redis configuration for 'on_connect', skipping...});
+        croak(q{Invalid Redis configuration for 'on_connect', skipping...});
       }
       else {
         $opts{on_connect} = $dsl2->redis_on_connect;
@@ -142,7 +149,7 @@ has _redis => (
     }
 
     # Validate connection settings.
-    $dsl2->error(q{Incomplete Redis configuration: required is either 'server' or 'sock'})
+    croak(q{Incomplete Redis configuration: required is either 'server' or 'sock'})
       if !$opts{server} && !$opts{sock};
 
     return Redis->new(%opts);
@@ -210,6 +217,11 @@ In order to use the supplied
 L<Sereal broker|Dancer2::Session::Redis::Serialization::Sereal> you have to
 install L<Sereal::Decoder> and L<Sereal::Encoder>. Both modules listed as
 runtime recommends with Dancer2::Session::Redis.
+
+=head1 DEPENDENCIES
+
+For some reason (need to be identified) Dancer2::Session::Redis requires
+Perl v5.13.2. Perl 5.12 and 5.10 aren't testet. They might work or not.
 
 =head1 SEE ALSO
 
