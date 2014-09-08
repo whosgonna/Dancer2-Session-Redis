@@ -94,7 +94,7 @@ has _serialization => (
         $serialization = "$serialization_module"->new( %{ $dsl1->redis_serialization } );
       }
       catch {
-        $dsl1->error(qq{Unable to set up serialization '$serialization_module': $_});
+        croak(qq{Unable to set up serialization '$serialization_module': $_});
       };
     }
     return $serialization;
@@ -126,7 +126,7 @@ has _redis => (
 
     # Validate reconnect settings.
     if ( ( exists $opts{reconnect} || exists $opts{every} ) && ( !$opts{reconnect} || !$opts{every} ) ) {
-      $dsl2->error(q{Incomplete Redis configuration for 'reconnect' and 'every', skipping...});
+      croak(q{Incomplete Redis configuration for 'reconnect' and 'every', skipping...});
       delete $opts{reconnect};
       delete $opts{every};
     }
@@ -134,7 +134,7 @@ has _redis => (
     # Validate on_connect settings.
     if ( $dsl2->redis_on_connect ) {
       if ( !$dsl2->redis_on_connect ) {
-        $dsl2->error(q{Invalid Redis configuration for 'on_connect', skipping...});
+        croak(q{Invalid Redis configuration for 'on_connect', skipping...});
       }
       else {
         $opts{on_connect} = $dsl2->redis_on_connect;
@@ -142,7 +142,7 @@ has _redis => (
     }
 
     # Validate connection settings.
-    $dsl2->error(q{Incomplete Redis configuration: required is either 'server' or 'sock'})
+    croak(q{Incomplete Redis configuration: required is either 'server' or 'sock'})
       if !$opts{server} && !$opts{sock};
 
     return Redis->new(%opts);
