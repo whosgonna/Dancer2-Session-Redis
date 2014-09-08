@@ -218,6 +218,11 @@ L<Sereal broker|Dancer2::Session::Redis::Serialization::Sereal> you have to
 install L<Sereal::Decoder> and L<Sereal::Encoder>. Both modules listed as
 runtime recommends with Dancer2::Session::Redis.
 
+=head1 DEPENDENCIES
+
+For some reason (need to be identified) Dancer2::Session::Redis requires
+Perl v5.13.2. Perl 5.12 and 5.10 aren't testet. They might work or not.
+
 =head1 SEE ALSO
 
 =over

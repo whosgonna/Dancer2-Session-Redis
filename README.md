@@ -14,6 +14,12 @@ there.
 The current build status is:
 ![build status image](https://api.travis-ci.org/burnersk/Dancer2-Session-Redis.png "Dancer2::Session::Redis build status on Travis CI")
 
+Dependencies
+------------
+
+For some reason (need to be identified) Dancer2::Session::Redis requires
+Perl v5.13.2. Perl 5.12 and 5.10 aren't testet. They might work or not.
+
 Copyright and License
 ---------------------
 
