@@ -1,6 +1,5 @@
 package t::TestApp::RedisMock;
 use strictures 1;
-use feature qw( state );
 # ABSTRACT: Redis mock for unit tests.
 # COPYRIGHT
 
@@ -11,14 +10,12 @@ BEGIN {
 use Moo;
 use Dancer2::Core::Types qw( Undef HashRef );
 
-use Data::Dump;
-
 ############################################################################
 
 has _storage => (
   is      => 'rwp',
   isa     => HashRef,
-  default => sub { state $storage = {}; $storage },
+  default => sub { {} },
 );
 
 ############################################################################
