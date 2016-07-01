@@ -23,7 +23,7 @@ Perl v5.13.2. Perl 5.12 and 5.10 aren't testet. They might work or not.
 Copyright and License
 ---------------------
 
-This software is Copyright (c) 2014 by BURNERSK <burnersk@cpan.org>.
+This software is Copyright (c) 2014-2016 by BURNERSK <burnersk@cpan.org>.
 
 This is free software, licensed under:
 
