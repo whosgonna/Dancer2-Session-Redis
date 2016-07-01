@@ -80,7 +80,9 @@ has redis_test_mock     => ( is => 'ro', default => sub { $ENV{DANCER_SESSION_RE
 has _serialization => (
   is      => 'lazy',
   isa     => Maybe [ $TYPE_SERIALIZATIONOBJECT ],
-  builder => sub {
+);
+
+sub _build__serialization {
     my ($dsl1) = @_;
     my $serialization;
     return unless $dsl1->redis_serialization;
@@ -100,13 +102,14 @@ has _serialization => (
       };
     }
     return $serialization;
-  },
-);
+}
 
 has _redis => (
   is      => 'lazy',
   isa     => InstanceOf ['Redis'] | InstanceOf ['t::TestApp::RedisMock'],
-  builder => sub {
+);
+
+sub _build__redis {
     my ($dsl2) = @_;
 
     if ( $dsl2->redis_test_mock ) {
@@ -153,8 +156,7 @@ has _redis => (
       if !$opts{server} && !$opts{sock};
 
     return Redis->new(%opts);
-  },
-);
+}
 
 ############################################################################
 
@@ -196,7 +198,7 @@ sub _sessions {
   my $key = sprintf $dsl->redis_key, '*';
   my $key_pattern = quotemeta sprintf $dsl->redis_key, '';
   my @keys = $dsl->_redis->keys($key);
-  return [ map { $_ =~ s/^$key_pattern(.*)$/$1/r } @keys ];
+  return [ map { my $a = $_; $a =~ s/^$key_pattern(.*)$/$1/; $a } @keys ];
 }
 
 ############################################################################
