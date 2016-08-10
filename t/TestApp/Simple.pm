@@ -16,13 +16,13 @@ use Dancer2::Plugin::Redis;
 get q{/} => sub { 'Hello World' };
 
 get q{/set} => sub {
-  no warnings qw(missing uninitialized);
+  no warnings 'all';
   session param('key') => param('value');
   sprintf 'set %s: %s', param('key'), session param('key');
 };
 
 get q{/get} => sub {
-  no warnings qw(missing uninitialized);
+  no warnings 'all';
   sprintf 'get %s: %s', param('key'), session param('key');
 };
 
