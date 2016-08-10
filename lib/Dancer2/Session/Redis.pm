@@ -155,6 +155,9 @@ sub _build__redis {
     croak(q{Incomplete Redis configuration: required is either 'server' or 'sock'})
       if !$opts{server} && !$opts{sock};
 
+    croak(q{Incomplete Redis configuration: session_duration is required})
+      unless $dsl2->has_session_duration;
+
     return Redis->new(%opts);
 }
 
