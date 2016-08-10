@@ -8,7 +8,7 @@ BEGIN {
 }
 
 use Moo;
-use Dancer2::Core::Types qw( Undef HashRef );
+use Types::Standard qw( Undef HashRef );
 
 ############################################################################
 

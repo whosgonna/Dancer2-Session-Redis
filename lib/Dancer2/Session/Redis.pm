@@ -8,7 +8,7 @@ BEGIN {
 }
 
 use Carp qw( carp croak );
-use Dancer2::Core::Types qw( Maybe Undef InstanceOf );
+use Types::Standard qw( Maybe Undef InstanceOf );
 use Moo;
 use Redis;
 use Safe::Isa;

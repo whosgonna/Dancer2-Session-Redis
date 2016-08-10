@@ -4,10 +4,10 @@ use strictures 1;
 # COPYRIGHT
 
 BEGIN {
-  our $VERSION = '0.001';  # fixed version - NOT handled via DZP::OurPkgVersion.
+  our $VERSION = '0.002';  # fixed version - NOT handled via DZP::OurPkgVersion.
 }
 
-use Dancer2::Core::Types qw( Bool InstanceOf );
+use Types::Standard qw( Bool InstanceOf );
 use Moo;
 use Sereal::Decoder qw( looks_like_sereal );
 use Sereal::Encoder qw( SRL_UNCOMPRESSED SRL_SNAPPY );
