@@ -1,5 +1,9 @@
 Revision history for Dancer2::Session::Redis
 
+0.005 Wed 10 Aug 14:22:42 CEST 2016
+
+    * Improve tests so they do not fail incorrectly on Travis-CI
+
 0.004 Wed 10 Aug 12:25:58 CEST 2016
 
     * Croak if session_duration config option has not been set
