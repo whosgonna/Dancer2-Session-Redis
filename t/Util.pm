@@ -4,6 +4,9 @@ use strictures 1;
 use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
+use HTTP::Cookies;
+
+my $jar = HTTP::Cookies->new;
 
 ############################################################################
 # Setup environment for Delti::WheelShop testing environment.
@@ -23,8 +26,23 @@ sub setconf {
   $set->( traces      => 1 );
   $set->( logger      => 'null' );
   $set->( show_errors => 1 );
-  $set->( session     => 'Redis' );
-  $set->( engines     => { session => { Redis => { redis_test_mock => 1 } } } );
+  # config ignored when using mocked test server
+  $set->(
+    engines => {
+      session => {
+        Redis => {
+          cookie_name         => 'vm',
+          redis_server        => "localhost:6379",
+          session_duration => 600,
+          redis_serialization => {
+            module      => "Dancer2::Session::Redis::Serialization::Sereal",
+            compression => "snappy",
+          }
+        }
+      }
+    }
+  );
+  $set->( session => 'Redis' );
   return;
 }
 
@@ -35,8 +53,9 @@ sub psgi_request_ok {
   my $client = sub {
     my ($cb) = @_;
     my $req = HTTP::Request->new( $method => "http://localhost$uri" );
-    $req->header( Cookie => 'dancer.session=-TEST-TEST-TEST--TEST-TEST-TEST-' );
+    $jar->add_cookie_header($req);
     my $res = $cb->($req);
+    $jar->extract_cookies($res);
     subtest "$method $uri" => sub {
       plan tests => $expected_response ? 2 : 1;
       ok( $res->is_success, "request successful for $method $uri" );
