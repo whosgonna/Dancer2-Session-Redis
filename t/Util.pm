@@ -26,8 +26,23 @@ sub setconf {
   $set->( traces      => 1 );
   $set->( logger      => 'null' );
   $set->( show_errors => 1 );
-  $set->( session     => 'Redis' );
-  $set->( engines     => { session => { Redis => { redis_test_mock => 1 } } } );
+  # config ignored when using mocked test server
+  $set->(
+    engines => {
+      session => {
+        Redis => {
+          cookie_name         => 'vm',
+          redis_server        => "localhost:6379",
+          session_duration => 600,
+          redis_serialization => {
+            module      => "Dancer2::Session::Redis::Serialization::Sereal",
+            compression => "snappy",
+          }
+        }
+      }
+    }
+  );
+  $set->( session => 'Redis' );
   return;
 }
 
