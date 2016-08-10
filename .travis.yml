@@ -9,6 +9,8 @@ perl:
   - "5.14"
   - "5.12"
   - "5.10"
+services:
+  - redis-server
 env:
   global:
     - RELEASE_TESTING=1
@@ -24,4 +26,4 @@ install:
 script:
   - perl Makefile.PL
   - make
-  - prove -b -r -s -j$(test-jobs) $(test-files)
+  - prove -b -r -s $(test-files)
