@@ -8,6 +8,10 @@ use t::Util;
 BEGIN {
     plan( skip_all => "Author tests not required for installation" )
         unless $ENV{RELEASE_TESTING};
+    eval 'use Sereal::Decoder;1'
+        or plan skip_all => "Sereal::Decoder needed to run these tests";
+    eval 'use Sereal::Encoder;1'
+        or plan skip_all => "Sereal::Encoder needed to run these tests";
     t::Util::setenv;
     $ENV{DANCER_SESSION_REDIS_TEST_MOCK} = 0;
 }
