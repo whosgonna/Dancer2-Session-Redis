@@ -30,7 +30,9 @@ sub setconf {
   $set->(
     engines => {
       session => {
-        Redis => {
+        Redis => $ENV{DANCER_SESSION_REDIS_TEST_MOCK}
+            ? { redis_test_mock => 1 }
+            : {
           cookie_name         => 'vm',
           redis_server        => "localhost:6379",
           session_duration => 600,
