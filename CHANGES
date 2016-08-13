@@ -1,5 +1,9 @@
 Revision history for Dancer2::Session::Redis
 
+0.007 Sat 13 Aug 12:38:48 CEST 2016
+
+    * Don't use Sereal in non-release tests GH#9 (andk)
+
 0.006 Wed 10 Aug 16:04:07 CEST 2016
 
     * Switch back to using Types::Standard
