@@ -5,6 +5,7 @@ use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
 use HTTP::Cookies;
+use Redis;
 
 my $jar = HTTP::Cookies->new;
 
@@ -45,7 +46,20 @@ sub setconf {
     }
   );
   $set->( session => 'Redis' );
-  return;
+  if ( $ENV{DANCER_SESSION_REDIS_TEST_MOCK} ) {
+    return 1;
+  }
+  else {
+    my $res = eval {
+      my $redis = Redis->new(
+        server => 'localhost:6379',
+        name   => 'dancer2_session_redis_test',
+      );
+      $redis->set(testing => 123);
+      $redis->get('testing');
+    };
+    return $res && $res == 123 ? 1 : 0;
+  }
 }
 
 ############################################################################
