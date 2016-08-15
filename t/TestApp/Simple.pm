@@ -26,5 +26,15 @@ get q{/get} => sub {
   sprintf 'get %s: %s', param('key'), session param('key');
 };
 
+get '/change_session_id' => sub {
+  if ( app->can('change_session_id') ) {
+    app->change_session_id;
+    return "supported";
+  }
+  else {
+    return "unsupported";
+  }
+};
+
 ############################################################################
 builder { psgi_app };

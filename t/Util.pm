@@ -83,6 +83,31 @@ sub psgi_request_ok {
   test_psgi( $app, $client );
   return;
 }
+sub psgi_change_session_id {
+  my $app = shift;
+  my $client = sub {
+    my ($cb) = @_;
+    my ( $sid1, $sid2 );
+    $jar->scan( sub { $sid1 = $_[2] } );
+    my $req = HTTP::Request->new( GET => "http://localhost/change_session_id" );
+    $jar->add_cookie_header($req);
+    my $res = $cb->($req);
+    $jar->extract_cookies($res);
+    $jar->scan( sub { $sid2 = $_[2] } );
+    subtest "change_session_id" => sub {
+      plan tests => 2;
+      ok( $res->is_success, "request successful for /change_session_id" );
+      SKIP: {
+        skip "change_session_id not supported by this Dancer2 version", 1
+          if $res->content eq 'unsupported';
+          isnt $sid1, $sid2, "Session ID has changed";
+      };
+    };
+    return;
+  };
+  test_psgi( $app, $client );
+  return;
+}
 
 ############################################################################
 1;
