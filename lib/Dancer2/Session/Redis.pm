@@ -204,6 +204,13 @@ sub _sessions {
   return [ map { my $a = $_; $a =~ s/^$key_pattern(.*)$/$1/; $a } @keys ];
 }
 
+# Change session ID.
+sub _change_id {
+    my ( $self, $old_id, $new_id ) = @_;
+    $self->_flush( $new_id, $self->_retrieve( $old_id ) );
+    $self->_destroy( $old_id );
+}
+
 ############################################################################
 
 =head1 DESCRIPTION
