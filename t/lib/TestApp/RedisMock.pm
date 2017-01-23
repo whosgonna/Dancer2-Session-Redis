@@ -1,10 +1,11 @@
-package t::TestApp::RedisMock;
+package TestApp::RedisMock;
 use strictures 1;
 # ABSTRACT: Redis mock for unit tests.
 # COPYRIGHT
 
 BEGIN {
   our $VERSION = '0.002';  # fixed version - NOT handled via DZP::OurPkgVersion.
+  our @ISA = 'Redis';
 }
 
 use Moo;
@@ -17,6 +18,10 @@ has _storage => (
   isa     => HashRef,
   default => sub { {} },
 );
+
+############################################################################
+
+sub connect { 1; }
 
 ############################################################################
 

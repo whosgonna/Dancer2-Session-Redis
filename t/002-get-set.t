@@ -3,26 +3,27 @@ use Test::More tests => 1 + 6;
 use Test::NoWarnings;
 use Plack::Test;
 use HTTP::Request::Common;
+use lib 't/lib';
 
-use t::Util;
+use Util;
 
-BEGIN { t::Util::setenv }
+BEGIN { Util::setenv }
 
-use t::TestApp::Simple;
+use TestApp::Simple;
 
-BEGIN { t::Util::setconf( \&t::TestApp::Simple::set ) }
+BEGIN { Util::setconf( \&TestApp::Simple::set ) }
 
 ############################################################################
 
-my $app = t::TestApp::Simple->psgi_app;
+my $app = TestApp::Simple->psgi_app;
 ok( $app, 'Got App' );
 
 ############################################################################
 
-t::Util::psgi_request_ok( $app, GET => q{/get?key=foo},           qr/^get foo: $/ );
-t::Util::psgi_request_ok( $app, GET => q{/set?key=foo&value=bar}, qr/^set foo: bar$/ );
-t::Util::psgi_request_ok( $app, GET => q{/get?key=foo},           qr/^get foo: bar$/ );
-t::Util::psgi_change_session_id( $app );
-t::Util::psgi_request_ok( $app, GET => q{/get?key=foo},           qr/^get foo: bar$/ );
+Util::psgi_request_ok( $app, GET => q{/get?key=foo},           qr/^get foo: $/ );
+Util::psgi_request_ok( $app, GET => q{/set?key=foo&value=bar}, qr/^set foo: bar$/ );
+Util::psgi_request_ok( $app, GET => q{/get?key=foo},           qr/^get foo: bar$/ );
+Util::psgi_change_session_id( $app );
+Util::psgi_request_ok( $app, GET => q{/get?key=foo},           qr/^get foo: bar$/ );
 
 ############################################################################

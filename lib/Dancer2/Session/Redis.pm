@@ -106,16 +106,11 @@ sub _build__serialization {
 
 has _redis => (
   is      => 'lazy',
-  isa     => InstanceOf ['Redis'] | InstanceOf ['t::TestApp::RedisMock'],
+  isa     => InstanceOf ['Redis'],
 );
 
 sub _build__redis {
     my ($dsl2) = @_;
-
-    if ( $dsl2->redis_test_mock ) {
-      require t::TestApp::RedisMock;
-      return t::TestApp::RedisMock->new;
-    }
 
     # Build Redis->new settings.
     my %opts = (
