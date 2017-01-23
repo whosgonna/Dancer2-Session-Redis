@@ -1,4 +1,4 @@
-package t::TestApp::Simple;
+package TestApp::Simple;
 use strictures 1;
 # ABSTRACT: Test application for unit tests.
 # COPYRIGHT

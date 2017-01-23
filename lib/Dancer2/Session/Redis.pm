@@ -75,7 +75,6 @@ has redis_debug         => ( is => 'ro' );
 has redis_name          => ( is => 'ro' );
 has redis_key           => ( is => 'ro', default => 'session:%s' );
 has redis_serialization => ( is => 'ro' );
-has redis_test_mock     => ( is => 'ro', default => sub { $ENV{DANCER_SESSION_REDIS_TEST_MOCK} || 0 } );
 
 has _serialization => (
   is      => 'lazy',
@@ -106,16 +105,11 @@ sub _build__serialization {
 
 has _redis => (
   is      => 'lazy',
-  isa     => InstanceOf ['Redis'] | InstanceOf ['t::TestApp::RedisMock'],
+  isa     => InstanceOf ['Redis'],
 );
 
 sub _build__redis {
     my ($dsl2) = @_;
-
-    if ( $dsl2->redis_test_mock ) {
-      require t::TestApp::RedisMock;
-      return t::TestApp::RedisMock->new;
-    }
 
     # Build Redis->new settings.
     my %opts = (

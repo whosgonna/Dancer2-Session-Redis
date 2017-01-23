@@ -3,22 +3,26 @@ use Test::More tests => 1 + 2;
 use Test::NoWarnings;
 use Plack::Test;
 use HTTP::Request::Common;
+use lib 't/lib';
 
-use t::Util;
+use Util;
 
-BEGIN { t::Util::setenv }
+BEGIN {
+  Util::setenv;
+  Util::mock_redis;
+}
 
-use t::TestApp::Simple;
+use TestApp::Simple;
 
-BEGIN { t::Util::setconf( \&t::TestApp::Simple::set ) }
+BEGIN { Util::setconf( \&TestApp::Simple::set ) }
 
 ############################################################################
 
-my $app = t::TestApp::Simple->psgi_app;
+my $app = TestApp::Simple->psgi_app;
 ok( $app, 'Got App' );
 
 ############################################################################
 
-t::Util::psgi_request_ok( $app, GET => q{/}, qr/^Hello World$/ );
+Util::psgi_request_ok( $app, GET => q{/}, qr/^Hello World$/ );
 
 ############################################################################

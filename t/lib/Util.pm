@@ -1,4 +1,4 @@
-package t::Util;
+package Util;
 use strictures 1;
 
 use Test::More;
@@ -6,19 +6,13 @@ use Plack::Test;
 use HTTP::Request::Common;
 use HTTP::Cookies;
 use Redis;
+require Dancer2::Session::Redis;
 
 my $jar = HTTP::Cookies->new;
 
-############################################################################
-# Setup environment for Delti::WheelShop testing environment.
-
 sub setenv {
   $ENV{PLACK_ENV} = $ENV{DANCER_ENVIRONMENT} = 'testing';
-  $ENV{DANCER_SESSION_REDIS_TEST_MOCK} = 1;
 }
-
-############################################################################
-# Setup environment for Delti::WheelShop testing environment.
 
 sub setconf {
   my ($set) = @_;
@@ -32,7 +26,7 @@ sub setconf {
     engines => {
       session => {
         Redis => $ENV{DANCER_SESSION_REDIS_TEST_MOCK}
-            ? { redis_test_mock => 1 }
+            ? {}
             : {
           cookie_name         => 'vm',
           redis_server        => "localhost:6379",
@@ -62,6 +56,18 @@ sub setconf {
   }
 }
 
+sub mock_redis {
+  no warnings 'redefine';
+
+  # mock the Redis constructor in our session
+  *Dancer2::Session::Redis::_build__redis = sub {
+    require TestApp::RedisMock;
+    return TestApp::RedisMock->new;
+  };
+
+  $ENV{DANCER_SESSION_REDIS_TEST_MOCK} = 1;
+}
+
 ############################################################################
 
 sub psgi_request_ok {
@@ -83,6 +89,7 @@ sub psgi_request_ok {
   test_psgi( $app, $client );
   return;
 }
+
 sub psgi_change_session_id {
   my $app = shift;
   my $client = sub {
