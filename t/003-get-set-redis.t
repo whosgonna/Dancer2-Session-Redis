@@ -12,7 +12,6 @@ BEGIN {
     eval 'use Sereal::Encoder;1'
         or plan skip_all => "Sereal::Encoder needed to run these tests";
     Util::setenv;
-    $ENV{DANCER_SESSION_REDIS_TEST_MOCK} = 0;
 }
 
 use TestApp::Simple;

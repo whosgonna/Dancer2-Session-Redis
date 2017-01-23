@@ -8,21 +8,10 @@ use HTTP::Cookies;
 use Redis;
 require Dancer2::Session::Redis;
 
-{
-  no warnings 'redefine';
-
-  # mock the Redis constructor in our session
-  *Dancer2::Session::Redis::_build__redis = sub {
-    require TestApp::RedisMock;
-    return TestApp::RedisMock->new;
-  };
-}
-
 my $jar = HTTP::Cookies->new;
 
 sub setenv {
   $ENV{PLACK_ENV} = $ENV{DANCER_ENVIRONMENT} = 'testing';
-  $ENV{DANCER_SESSION_REDIS_TEST_MOCK} = 1;
 }
 
 sub setconf {
@@ -37,7 +26,7 @@ sub setconf {
     engines => {
       session => {
         Redis => $ENV{DANCER_SESSION_REDIS_TEST_MOCK}
-            ? { redis_test_mock => 1 }
+            ? {}
             : {
           cookie_name         => 'vm',
           redis_server        => "localhost:6379",
@@ -65,6 +54,18 @@ sub setconf {
     };
     return $res && $res == 123 ? 1 : 0;
   }
+}
+
+sub mock_redis {
+  no warnings 'redefine';
+
+  # mock the Redis constructor in our session
+  *Dancer2::Session::Redis::_build__redis = sub {
+    require TestApp::RedisMock;
+    return TestApp::RedisMock->new;
+  };
+
+  $ENV{DANCER_SESSION_REDIS_TEST_MOCK} = 1;
 }
 
 ############################################################################

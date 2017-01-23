@@ -75,7 +75,6 @@ has redis_debug         => ( is => 'ro' );
 has redis_name          => ( is => 'ro' );
 has redis_key           => ( is => 'ro', default => 'session:%s' );
 has redis_serialization => ( is => 'ro' );
-has redis_test_mock     => ( is => 'ro', default => sub { $ENV{DANCER_SESSION_REDIS_TEST_MOCK} || 0 } );
 
 has _serialization => (
   is      => 'lazy',

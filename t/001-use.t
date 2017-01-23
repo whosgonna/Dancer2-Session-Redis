@@ -7,7 +7,10 @@ use lib 't/lib';
 
 use Util;
 
-BEGIN { Util::setenv }
+BEGIN {
+  Util::setenv;
+  Util::mock_redis;
+}
 
 use TestApp::Simple;
 
